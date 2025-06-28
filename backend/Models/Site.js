@@ -1,29 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const siteSchema = new mongoose.Schema({
-  destinationname: {
-    type: String,
-    required: true,
-    unique: true
+const reviewSchema = new mongoose.Schema({
+  username: String,
+  comment: String,
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
   },
-  description: {
-    type: String,
-    required: true
-  },
-  image: {
-    type: String,
-    required: true
-  },
-  sites: {
-    type: [
-      {
-        name: { type: String, required: true },
-        image: { type: String, required: true }
-      }
-    ],
-    required: true
-  }
 });
 
-const Site = mongoose.model('Site', siteSchema);
+const siteSchema = new mongoose.Schema({
+  destinationname: String,
+  description: String,
+  image: String,
+  latitude: Number,          // ✅ New field
+  longitude: Number,
+  views: {
+    type: Number,
+    default: 0
+  },     // ✅ New field
+  sites: [
+    {
+      name: String,
+      image: String,
+      reviews: [reviewSchema],
+    },
+  ],
+});
+
+const Site = mongoose.model("Site", siteSchema);
 module.exports = Site;

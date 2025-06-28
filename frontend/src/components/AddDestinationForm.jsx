@@ -1,26 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-function AddDestinationForm({ onSubmit, onCancel, initialData }) {
+const AddDestinationForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     destinationname: "",
     description: "",
     image: "",
-    sites: [{ name: "", image: "" }],
+    latitude: "",
+    longitude: "",
+    sites: [],
   });
 
-  // If editing, load the initial data
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        destinationname: initialData.destinationname || "",
-        description: initialData.description || "",
-        image: initialData.image || "",
-        sites: initialData.sites.length
-          ? initialData.sites
-          : [{ name: "", image: "" }],
-      });
-    }
-  }, [initialData]);
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
   const handleSiteChange = (index, field, value) => {
     const updatedSites = [...formData.sites];
@@ -28,7 +20,7 @@ function AddDestinationForm({ onSubmit, onCancel, initialData }) {
     setFormData({ ...formData, sites: updatedSites });
   };
 
-  const handleAddSiteField = () => {
+  const addSite = () => {
     setFormData({
       ...formData,
       sites: [...formData.sites, { name: "", image: "" }],
@@ -38,99 +30,95 @@ function AddDestinationForm({ onSubmit, onCancel, initialData }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
-
-    // Reset form only if adding, not editing
-    if (!initialData) {
-      setFormData({
-        destinationname: "",
-        description: "",
-        image: "",
-        sites: [{ name: "", image: "" }],
-      });
-    }
   };
 
   return (
-    <div className="card p-4 mt-4">
-      <h5 className="mb-3">{initialData ? "Edit Destination" : "Add New Destination"}</h5>
+    <div className="card mt-4 p-3">
+      <h5 className="mb-3">Add New Destination</h5>
       <form onSubmit={handleSubmit}>
         <input
           className="form-control mb-2"
           placeholder="Destination Name"
           value={formData.destinationname}
-          onChange={(e) => setFormData({ ...formData, destinationname: e.target.value })}
+          onChange={(e) => handleChange("destinationname", e.target.value)}
           required
         />
         <textarea
           className="form-control mb-2"
           placeholder="Description"
           value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+          onChange={(e) => handleChange("description", e.target.value)}
           required
         />
         <input
           className="form-control mb-2"
-          placeholder="Destination Image URL"
+          placeholder="Image URL"
           value={formData.image}
-          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+          onChange={(e) => handleChange("image", e.target.value)}
           required
         />
+        <div className="row">
+          <div className="col-md-6">
+            <input
+              className="form-control mb-2"
+              placeholder="Latitude"
+              type="number"
+              value={formData.latitude}
+              onChange={(e) => handleChange("latitude", e.target.value)}
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <input
+              className="form-control mb-2"
+              placeholder="Longitude"
+              type="number"
+              value={formData.longitude}
+              onChange={(e) => handleChange("longitude", e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-        <h6 className="mt-3">Sites</h6>
-        {formData.sites.map((site, index) => (
-          <div key={index} className="mb-3">
+        <h6>Sites</h6>
+        {formData.sites.map((site, idx) => (
+          <div key={idx} className="mb-2">
             <input
               className="form-control mb-1"
               placeholder="Site Name"
               value={site.name}
-              onChange={(e) =>
-                handleSiteChange(index, "name", e.target.value)
-              }
+              onChange={(e) => handleSiteChange(idx, "name", e.target.value)}
               required
             />
             <input
               className="form-control"
               placeholder="Site Image URL"
               value={site.image}
-              onChange={(e) =>
-                handleSiteChange(index, "image", e.target.value)
-              }
+              onChange={(e) => handleSiteChange(idx, "image", e.target.value)}
               required
             />
           </div>
         ))}
 
-        <div className="d-flex justify-content-center mt-3">
-          <button
-            type="button"
-            onClick={handleAddSiteField}
-            className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
-            style={{
-              width: "32px",
-              height: "32px",
-              fontSize: "1rem",
-              padding: "0",
-              borderRadius: "50%",
-            }}
-            title="Add Site"
-          >
-            +
-          </button>
-        </div>
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-primary mb-3"
+          onClick={addSite}
+        >
+          ➕ Add Site
+        </button>
 
-        <div className="d-flex justify-content-between mt-3">
+        <div className="d-flex justify-content-between">
+          <button type="submit" className="btn btn-success">
+            Submit
+          </button>
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
             Cancel
-          </button>
-          <button type="submit" className="btn btn-primary">
-            {initialData ? "Update" : "Create"}
           </button>
         </div>
       </form>
     </div>
   );
-}
+};
 
 export default AddDestinationForm;

@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+@media (max-width: 768px) {
+  .card {
+    margin: 1rem 0;
+  }
+
+  .navbar .form-control {
+    width: 100% !important;
+    margin-top: 0.5rem;
+  }
+
+  .navbar .btn {
+    margin-top: 0.5rem;
+  }
+
+  .leaflet-container {
+    height: 300px !important;
+  }
+}
